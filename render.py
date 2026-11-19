@@ -1,5 +1,6 @@
-"""Activity card. Rank on the left, stat rows on the right. A glyph shows the rank."""
+"""Activity card. Mini keeps the glyph. The other sizes put the rank in a ring."""
 
+import math
 import sys
 from pathlib import Path
 
@@ -16,10 +17,6 @@ ROWS = (
     ("issues", "Issues"),
     ("contributed", "Contributed"),
 )
-EXTRA = ROWS + (
-    ("reviews", "Reviews"),
-    ("followers", "Followers"),
-)
 RANKS = ("S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C")
 
 
@@ -30,8 +27,8 @@ def render(mode, size, data):
     if size == "wide":
         return _wide(mode, colors, data)
     if size == "regular":
-        return _sheet(mode, colors, data, EXTRA)
-    return _sheet(mode, colors, data, ROWS)
+        return _regular(mode, colors, data)
+    return _compact(mode, colors, data)
 
 
 def _mark(x, y, colors, size=6):
@@ -79,21 +76,91 @@ def _mini(mode, colors, data):
     ])
 
 
-def _sheet(mode, colors, data, rows):
-    tall = len(rows) > 5
-    width, height = 495, 248 if tall else 212
+def _share(rank):
+    """How full the ring is. S closes it. C is the first step."""
+    if rank not in RANKS:
+        return 0
+    return (len(RANKS) - RANKS.index(rank)) / len(RANKS)
+
+
+def _end_dot(cx, cy, radius, angle, fill, stroke):
+    """A dot on the ring, at the end of the arc."""
+    x = cx + radius * math.cos(angle)
+    y = cy + radius * math.sin(angle)
+    return (
+        f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{stroke + 2}" fill="{fill}"/>'
+    )
+
+
+def _dot_fill(mode, colors):
+    """The arc stays white or black. Only classic-r and white-r turn the end dot red."""
+    if mode.endswith("-r"):
+        return colors["mark"]
+    return colors["figure"]
+
+
+def _ring(cx, cy, radius, rank, colors, dot, stroke=3):
+    """A track, then an arc for the rank. A dot marks the end. The rank sits in the middle."""
+    ink = colors["figure"]
+    parts = [
+        f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{radius}" fill="none" '
+        f'stroke="{colors["rule"]}" stroke-width="{stroke}"/>'
+    ]
+    share = _share(rank)
+    start = -math.pi / 2
+    if share >= 1:
+        parts.append(
+            f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{radius}" fill="none" '
+            f'stroke="{ink}" stroke-width="{stroke}"/>'
+        )
+        parts.append(_end_dot(cx, cy, radius, start, dot, stroke))
+    elif share > 0:
+        end = start + 2 * math.pi * share
+        x1 = cx + radius * math.cos(start)
+        y1 = cy + radius * math.sin(start)
+        x2 = cx + radius * math.cos(end)
+        y2 = cy + radius * math.sin(end)
+        large = 1 if share > 0.5 else 0
+        parts.append(
+            f'<path d="M {x1:.2f} {y1:.2f} A {radius} {radius} 0 {large} 1 {x2:.2f} {y2:.2f}" '
+            f'fill="none" stroke="{ink}" stroke-width="{stroke}"/>'
+        )
+        parts.append(_end_dot(cx, cy, radius, end, dot, stroke))
+    return "".join(parts)
+
+
+def _compact(mode, colors, data):
+    width, height = 495, 212
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
+    cy = 118
     parts = [
         open_svg(mode, width, height, f"{data['login']} activity"),
         name,
-        label(20, 118 if tall else 108, data["rank"], colors["figure"], 44, -1.2),
-        label(20, 146 if tall else 134, "Rank", colors["muted"], 12, 0.3),
-        _ladder(108, 78, data["rank"], colors, cell=8, gap=6, across=False),
+        _ring(86, cy, 36, data["rank"], colors, _dot_fill(mode, colors)),
+        label(86, cy + 8, data["rank"], colors["figure"], 26, -0.8, anchor="middle"),
     ]
-    pitch = 22
-    for index, (key, title) in enumerate(rows):
-        y = 72 + index * pitch
-        parts.append(_stat(156, y, title, data[key], colors, width - 20))
+    for index, (key, title) in enumerate(ROWS):
+        parts.append(_stat(168, 72 + index * 22, title, data[key], colors, width - 20))
+    return "\n".join(parts + ["</svg>"])
+
+
+def _regular(mode, colors, data):
+    """Same five counts as compact, split into two columns."""
+    name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
+    cy = 118
+    parts = [
+        open_svg(mode, 495, 212, f"{data['login']} activity"),
+        name,
+        _ring(86, cy, 36, data["rank"], colors, _dot_fill(mode, colors)),
+        label(86, cy + 8, data["rank"], colors["figure"], 26, -0.8, anchor="middle"),
+    ]
+    columns = (ROWS[:3], ROWS[3:])
+    xs = (168, 340)
+    numbers = (322, 475)
+    ys = (86, 118, 150)
+    for column, rows in enumerate(columns):
+        for row, (key, title) in enumerate(rows):
+            parts.append(_stat(xs[column], ys[row], title, data[key], colors, numbers[column]))
     return "\n".join(parts + ["</svg>"])
 
 
@@ -103,16 +170,16 @@ def _wide(mode, colors, data):
         open_svg(mode, 896, 220, f"{data['login']} activity"),
         name,
         label(876, 36, f"@{data['login']}", colors["muted"], 12, 0.2, anchor="end"),
-        label(20, 108, data["rank"], colors["figure"], 48, -1.2),
-        label(20, 136, "Rank", colors["muted"], 12, 0.3),
-        _ladder(20, 158, data["rank"], colors, cell=16, gap=10, labels=True),
+        _ring(100, 124, 46, data["rank"], colors, _dot_fill(mode, colors), stroke=4),
+        label(100, 132, data["rank"], colors["figure"], 28, -0.8, anchor="middle"),
     ]
-    for index, (key, title) in enumerate(EXTRA):
-        column = index // 4
-        row = index % 4
-        x = 300 + column * 300
-        y = 78 + row * 28
-        parts.append(_stat(x, y, title, data[key], colors, x + 180))
+    columns = (ROWS[:3], ROWS[3:])
+    xs = (300, 600)
+    ys = (88, 124, 160)
+    for column, rows in enumerate(columns):
+        for row, (key, title) in enumerate(rows):
+            x = xs[column]
+            parts.append(_stat(x, ys[row], title, data[key], colors, x + 180))
     return "\n".join(parts + ["</svg>"])
 
 
@@ -136,7 +203,7 @@ def main():
     lines = [
         f"# {login}",
         "",
-        "The rank sits on the left with a glyph of nine equal squares. The stat rows sit on the right.",
+        "Mini keeps the glyph of nine squares. Compact, regular, and wide put the rank inside a ring. The arc stays white or black. On classic-r and white-r the end dot is red. S closes the ring.",
         "",
     ]
     for mode in MODES:
