@@ -1,4 +1,4 @@
-"""Activity card. Compact is this year. Regular is a fitted bar row. Wide gives the bars room."""
+"""Activity card. Rank on the left, the stat rows on the right. Wide adds the year bars."""
 
 import sys
 from pathlib import Path
@@ -9,56 +9,96 @@ from nothing import MODES, SIZES, theme
 
 ROOT = Path(__file__).resolve().parent
 
+ROWS = (
+    ("stars", "Stars"),
+    ("commits", "Commits"),
+    ("pulls", "Pulls"),
+    ("issues", "Issues"),
+    ("contributed", "Contributed"),
+)
+EXTRA = ROWS + (
+    ("reviews", "Reviews"),
+    ("followers", "Followers"),
+)
+
 
 def render(mode, size, data):
     colors = theme(mode)
     if size == "mini":
         return _mini(mode, colors, data)
-    if size == "compact":
-        return _compact(mode, colors, data)
     if size == "wide":
-        return _bars(mode, colors, data, 896, 240, 140)
-    return _bars(mode, colors, data, 495, 210, 100)
+        return _wide(mode, colors, data)
+    if size == "regular":
+        return _sheet(mode, colors, data, 495, 248, EXTRA)
+    return _sheet(mode, colors, data, 495, 195, ROWS)
+
+
+def _mark(x, y, colors, size=6):
+    return f'<rect x="{x}" y="{y}" width="{size}" height="{size}" fill="{colors["mark"]}"/>'
+
+
+def _stat(x, y, title, value, colors, number_x):
+    return "\n".join([
+        _mark(x, y - 10, colors),
+        label(x + 14, y, title, colors["fg"], 13, 0.15),
+        label(number_x, y, f"{value:,}", colors["figure"], 13, 0.1, anchor="end"),
+    ])
 
 
 def _mini(mode, colors, data):
-    year, count = data["years"][-1]
     name, _ = dots("ACTIVITY", 28, 12, colors["fg"], scale=1.15)
     return "\n".join([
-        open_svg(mode, 220, 148, f"{data['login']} activity", mark=6, margin=14),
+        open_svg(mode, 220, 168, f"{data['login']} activity", mark=6, margin=14),
         name,
-        label(16, 108, f"{count:,}", colors["figure"], 28, -0.8),
-        label(16, 130, year, colors["muted"], 12, 0.2),
+        label(16, 96, data["rank"], colors["figure"], 36, -1),
+        label(16, 118, "Rank", colors["muted"], 11, 0.3),
+        _stat(16, 148, "Stars", data["stars"], colors, 204),
         "</svg>",
     ])
 
 
-def _compact(mode, colors, data):
-    year, count = data["years"][-1]
+def _sheet(mode, colors, data, width, height, rows):
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
-    return "\n".join([
-        open_svg(mode, 495, 132, f"{data['login']} activity"),
+    parts = [
+        open_svg(mode, width, height, f"{data['login']} activity"),
         name,
-        label(20, 108, f"{count:,}", colors["figure"], 36, -1),
-        label(250, 92, year, colors["fg"], 20, 0.2),
-        label(250, 114, f"@{data['login']}", colors["muted"], 13, 0.3),
-        "</svg>",
-    ])
+        label(20, height - 72, data["rank"], colors["figure"], 44, -1.2),
+        label(20, height - 42, "Rank", colors["muted"], 12, 0.3),
+    ]
+    pitch = 22 if len(rows) <= 5 else 24
+    for index, (key, title) in enumerate(rows):
+        y = 70 + index * pitch
+        parts.append(_stat(160, y, title, data[key], colors, width - 20))
+    return "\n".join(parts + ["</svg>"])
 
 
-def _bars(mode, colors, data, width, height, bar_max):
+def _wide(mode, colors, data):
+    name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
+    parts = [
+        open_svg(mode, 896, 292, f"{data['login']} activity"),
+        name,
+        label(876, 36, f"@{data['login']}", colors["muted"], 12, 0.2, anchor="end"),
+        label(20, 128, data["rank"], colors["figure"], 48, -1.2),
+        label(20, 156, "Rank", colors["muted"], 12, 0.3),
+    ]
+    for index, (key, title) in enumerate(EXTRA):
+        column = index // 4
+        row = index % 4
+        x = 148 + column * 400
+        y = 78 + row * 26
+        parts.append(_stat(x, y, title, data[key], colors, x + 210))
     years = data["years"] or [["—", 0]]
     peak = max(count for _, count in years) or 1
-    name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
-    parts = [open_svg(mode, width, height, f"{data['login']} activity"), name]
-    slot = (width - 40) / len(years)
-    baseline = height - 52
+    slot = 840 / len(years)
+    baseline = 236
     for index, (year, count) in enumerate(years):
-        x = 20 + index * slot
-        bar = max(4, bar_max * (count / peak))
-        parts.append(f'<rect x="{x:.1f}" y="{baseline - bar:.1f}" width="18" height="{bar:.1f}" fill="{colors["figure"]}"/>')
-        parts.append(label(x, baseline + 18, year, colors["muted"], 11, 0.2))
-        parts.append(label(x, baseline + 34, f"{count:,}", colors["fg"], 11, 0.1))
+        x = 28 + index * slot
+        bar = max(3, 48 * (count / peak))
+        parts.append(
+            f'<rect x="{x:.1f}" y="{baseline - bar:.1f}" width="28" height="{bar:.1f}" fill="{colors["figure"]}"/>'
+        )
+        parts.append(label(x, baseline + 16, year, colors["muted"], 11, 0.15))
+        parts.append(label(x, baseline + 32, f"{count:,}", colors["fg"], 11, 0.1))
     return "\n".join(parts + ["</svg>"])
 
 
@@ -79,7 +119,12 @@ def main():
     data = activity(login)
     out = ROOT / "dist" / data["login"]
     out.mkdir(parents=True, exist_ok=True)
-    lines = [f"# {login}", "", "Compact is this year. Regular and wide are bar widgets at GitHub widths.", ""]
+    lines = [
+        f"# {login}",
+        "",
+        "Mini is the rank. Compact and regular are the stat sheet. Wide adds the year bars.",
+        "",
+    ]
     for mode in MODES:
         lines += [f"## {mode}", ""]
         for size in SIZES:
