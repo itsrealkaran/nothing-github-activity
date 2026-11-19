@@ -1,4 +1,4 @@
-"""Activity card. Rank on the left, the stat rows on the right. Wide adds the year bars."""
+"""Activity card. Rank on the left, stat rows on the right. A glyph shows the rank."""
 
 import sys
 from pathlib import Path
@@ -20,6 +20,7 @@ EXTRA = ROWS + (
     ("reviews", "Reviews"),
     ("followers", "Followers"),
 )
+RANKS = ("S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C")
 
 
 def render(mode, size, data):
@@ -29,12 +30,32 @@ def render(mode, size, data):
     if size == "wide":
         return _wide(mode, colors, data)
     if size == "regular":
-        return _sheet(mode, colors, data, 495, 248, EXTRA)
-    return _sheet(mode, colors, data, 495, 195, ROWS)
+        return _sheet(mode, colors, data, EXTRA)
+    return _sheet(mode, colors, data, ROWS)
 
 
 def _mark(x, y, colors, size=6):
     return f'<rect x="{x}" y="{y}" width="{size}" height="{size}" fill="{colors["mark"]}"/>'
+
+
+def _ladder(x, y, rank, colors, cell=8, gap=4, across=True, labels=False):
+    """Nine equal squares. Lit from S through the current rank. Not a value chart."""
+    level = RANKS.index(rank) if rank in RANKS else len(RANKS) - 1
+    parts = []
+    step = cell + gap
+    for index, name in enumerate(RANKS):
+        px = x + index * step if across else x
+        py = y if across else y + index * step
+        if index < level:
+            fill = colors["figure"]
+        elif index == level:
+            fill = colors["mark"]
+        else:
+            fill = colors["rule"]
+        parts.append(f'<rect x="{px:.1f}" y="{py:.1f}" width="{cell}" height="{cell}" fill="{fill}"/>')
+        if labels:
+            parts.append(label(px + cell / 2, py + cell + 13, name, colors["muted"], 10, 0, anchor="middle"))
+    return "\n".join(parts)
 
 
 def _stat(x, y, title, value, colors, number_x):
@@ -50,55 +71,48 @@ def _mini(mode, colors, data):
     return "\n".join([
         open_svg(mode, 220, 168, f"{data['login']} activity", mark=6, margin=14),
         name,
-        label(16, 96, data["rank"], colors["figure"], 36, -1),
-        label(16, 118, "Rank", colors["muted"], 11, 0.3),
-        _stat(16, 148, "Stars", data["stars"], colors, 204),
+        label(16, 88, data["rank"], colors["figure"], 32, -1),
+        label(16, 108, "Rank", colors["muted"], 11, 0.3),
+        _ladder(16, 122, data["rank"], colors, cell=12, gap=6),
+        _stat(16, 156, "Stars", data["stars"], colors, 204),
         "</svg>",
     ])
 
 
-def _sheet(mode, colors, data, width, height, rows):
+def _sheet(mode, colors, data, rows):
+    tall = len(rows) > 5
+    width, height = 495, 248 if tall else 212
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     parts = [
         open_svg(mode, width, height, f"{data['login']} activity"),
         name,
-        label(20, height - 72, data["rank"], colors["figure"], 44, -1.2),
-        label(20, height - 42, "Rank", colors["muted"], 12, 0.3),
+        label(20, 118 if tall else 108, data["rank"], colors["figure"], 44, -1.2),
+        label(20, 146 if tall else 134, "Rank", colors["muted"], 12, 0.3),
+        _ladder(108, 78, data["rank"], colors, cell=8, gap=6, across=False),
     ]
-    pitch = 22 if len(rows) <= 5 else 24
+    pitch = 22
     for index, (key, title) in enumerate(rows):
-        y = 70 + index * pitch
-        parts.append(_stat(160, y, title, data[key], colors, width - 20))
+        y = 72 + index * pitch
+        parts.append(_stat(156, y, title, data[key], colors, width - 20))
     return "\n".join(parts + ["</svg>"])
 
 
 def _wide(mode, colors, data):
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     parts = [
-        open_svg(mode, 896, 292, f"{data['login']} activity"),
+        open_svg(mode, 896, 220, f"{data['login']} activity"),
         name,
         label(876, 36, f"@{data['login']}", colors["muted"], 12, 0.2, anchor="end"),
-        label(20, 128, data["rank"], colors["figure"], 48, -1.2),
-        label(20, 156, "Rank", colors["muted"], 12, 0.3),
+        label(20, 108, data["rank"], colors["figure"], 48, -1.2),
+        label(20, 136, "Rank", colors["muted"], 12, 0.3),
+        _ladder(20, 158, data["rank"], colors, cell=16, gap=10, labels=True),
     ]
     for index, (key, title) in enumerate(EXTRA):
         column = index // 4
         row = index % 4
-        x = 148 + column * 400
-        y = 78 + row * 26
-        parts.append(_stat(x, y, title, data[key], colors, x + 210))
-    years = data["years"] or [["—", 0]]
-    peak = max(count for _, count in years) or 1
-    slot = 840 / len(years)
-    baseline = 236
-    for index, (year, count) in enumerate(years):
-        x = 28 + index * slot
-        bar = max(3, 48 * (count / peak))
-        parts.append(
-            f'<rect x="{x:.1f}" y="{baseline - bar:.1f}" width="28" height="{bar:.1f}" fill="{colors["figure"]}"/>'
-        )
-        parts.append(label(x, baseline + 16, year, colors["muted"], 11, 0.15))
-        parts.append(label(x, baseline + 32, f"{count:,}", colors["fg"], 11, 0.1))
+        x = 300 + column * 300
+        y = 78 + row * 28
+        parts.append(_stat(x, y, title, data[key], colors, x + 180))
     return "\n".join(parts + ["</svg>"])
 
 
@@ -122,7 +136,7 @@ def main():
     lines = [
         f"# {login}",
         "",
-        "Mini is the rank. Compact and regular are the stat sheet. Wide adds the year bars.",
+        "The rank sits on the left with a glyph of nine equal squares. The stat rows sit on the right.",
         "",
     ]
     for mode in MODES:
