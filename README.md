@@ -25,11 +25,11 @@ An SVG for a GitHub profile. Place the URL in a README, on a site, or anywhere a
 ## Usage
 
 ```text
-https://<host>/activity?username=itsrealkaran
+https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran
 ```
 
 ```md
-![activity](https://<host>/activity?username=itsrealkaran)
+![activity](https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran)
 ```
 
 Leave `theme` and `size` off for the classic regular card. An unknown username, theme, or size still returns an SVG, so the image slot in a README stays intact.
@@ -70,19 +70,19 @@ The files in `dist/` use the theme name, then the size: `classic-regular.svg`.
 
 ## Examples
 
-Previews use `itsrealkaran`. Replace `<host>` with your server.
+Previews use `itsrealkaran`.
 
 ### classic
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=classic&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic&size=mini`
 
 ![activity classic mini](dist/itsrealkaran/classic-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=classic&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic&size=compact`
 
 ![activity classic compact](dist/itsrealkaran/classic-compact.svg)
 
@@ -90,13 +90,13 @@ Previews use `itsrealkaran`. Replace `<host>` with your server.
 
 This is the default. You can leave `theme` and `size` off and get this card.
 
-`https://<host>/activity?username=itsrealkaran&theme=classic&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic&size=regular`
 
 ![activity classic regular](dist/itsrealkaran/classic-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=classic&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic&size=wide`
 
 ![activity classic wide](dist/itsrealkaran/classic-wide.svg)
 
@@ -104,25 +104,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=classic-r&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic-r&size=mini`
 
 ![activity classic-r mini](dist/itsrealkaran/classic-r-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=classic-r&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic-r&size=compact`
 
 ![activity classic-r compact](dist/itsrealkaran/classic-r-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=classic-r&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic-r&size=regular`
 
 ![activity classic-r regular](dist/itsrealkaran/classic-r-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=classic-r&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=classic-r&size=wide`
 
 ![activity classic-r wide](dist/itsrealkaran/classic-r-wide.svg)
 
@@ -130,25 +130,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=white&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white&size=mini`
 
 ![activity white mini](dist/itsrealkaran/white-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=white&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white&size=compact`
 
 ![activity white compact](dist/itsrealkaran/white-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=white&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white&size=regular`
 
 ![activity white regular](dist/itsrealkaran/white-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=white&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white&size=wide`
 
 ![activity white wide](dist/itsrealkaran/white-wide.svg)
 
@@ -156,25 +156,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=white-r&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white-r&size=mini`
 
 ![activity white-r mini](dist/itsrealkaran/white-r-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=white-r&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white-r&size=compact`
 
 ![activity white-r compact](dist/itsrealkaran/white-r-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=white-r&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white-r&size=regular`
 
 ![activity white-r regular](dist/itsrealkaran/white-r-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=white-r&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=white-r&size=wide`
 
 ![activity white-r wide](dist/itsrealkaran/white-r-wide.svg)
 
@@ -182,25 +182,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=light&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=light&size=mini`
 
 ![activity light mini](dist/itsrealkaran/light-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=light&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=light&size=compact`
 
 ![activity light compact](dist/itsrealkaran/light-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=light&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=light&size=regular`
 
 ![activity light regular](dist/itsrealkaran/light-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=light&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=light&size=wide`
 
 ![activity light wide](dist/itsrealkaran/light-wide.svg)
 
@@ -208,25 +208,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=red&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=red&size=mini`
 
 ![activity red mini](dist/itsrealkaran/red-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=red&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=red&size=compact`
 
 ![activity red compact](dist/itsrealkaran/red-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=red&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=red&size=regular`
 
 ![activity red regular](dist/itsrealkaran/red-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=red&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=red&size=wide`
 
 ![activity red wide](dist/itsrealkaran/red-wide.svg)
 
@@ -234,25 +234,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=blue&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=blue&size=mini`
 
 ![activity blue mini](dist/itsrealkaran/blue-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=blue&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=blue&size=compact`
 
 ![activity blue compact](dist/itsrealkaran/blue-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=blue&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=blue&size=regular`
 
 ![activity blue regular](dist/itsrealkaran/blue-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=blue&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=blue&size=wide`
 
 ![activity blue wide](dist/itsrealkaran/blue-wide.svg)
 
@@ -260,25 +260,25 @@ This is the default. You can leave `theme` and `size` off and get this card.
 
 #### mini
 
-`https://<host>/activity?username=itsrealkaran&theme=yellow&size=mini`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=yellow&size=mini`
 
 ![activity yellow mini](dist/itsrealkaran/yellow-mini.svg)
 
 #### compact
 
-`https://<host>/activity?username=itsrealkaran&theme=yellow&size=compact`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=yellow&size=compact`
 
 ![activity yellow compact](dist/itsrealkaran/yellow-compact.svg)
 
 #### regular
 
-`https://<host>/activity?username=itsrealkaran&theme=yellow&size=regular`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=yellow&size=regular`
 
 ![activity yellow regular](dist/itsrealkaran/yellow-regular.svg)
 
 #### wide
 
-`https://<host>/activity?username=itsrealkaran&theme=yellow&size=wide`
+`https://github.com/itsrealkaran/nothing-github-activity?username=itsrealkaran&theme=yellow&size=wide`
 
 ![activity yellow wide](dist/itsrealkaran/yellow-wide.svg)
 
@@ -330,9 +330,9 @@ Fork this repo for your own host. Your copy stays awake if a shared deploy sleep
 1. Fork the repo.
 2. Deploy the Dockerfile on Fly, Railway, Render, Cloud Run, or a virtual machine. Or deploy `server.js` on Vercel or Netlify.
 3. Set the variables below as secrets. Do not commit them.
-4. Open `https://<your-host>/activity?username=yourname`.
+4. Open `https://github.com/itsrealkaran/nothing-github-activity?username=yourname`.
 
-Use that host in the image URL. The path and the query stay the same.
+Use that address in the image URL. The query stays the same.
 
 ## Configuration
 

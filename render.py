@@ -184,7 +184,7 @@ def _wide(mode, colors, data):
 
 
 def _variant(card, login, mode, size, filename):
-    url = f"https://github.com/itsrealkaran/{card}?username={login}&theme={mode}&size={size}"
+    url = f"https://github.com/itsrealkaran/nothing-github-activity?username={login}&theme={mode}&size={size}"
     return [
         f"**{card}** · {mode} · {size}",
         "",
