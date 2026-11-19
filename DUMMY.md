@@ -1,6 +1,6 @@
 # itsrealkaran
 
-The rank sits on the left with a glyph of nine equal squares. The stat rows sit on the right.
+Mini keeps the glyph of nine squares. Compact, regular, and wide put the rank inside a ring. The arc stays white or black. On classic-r and white-r the end dot is red. S closes the ring.
 
 ## classic
 
