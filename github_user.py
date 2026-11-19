@@ -212,6 +212,33 @@ def streak(login):
     }
 
 
+def _exp_cdf(value):
+    return 1 - 2 ** (-value)
+
+
+def _log_cdf(value):
+    return value / (1 + value) if value else 0
+
+
+def _level(commits, pulls, issues, reviews, stars, followers):
+    """Same score steps as the usual GitHub stats rank."""
+    score = (
+        2 * _exp_cdf(commits / 250)
+        + 3 * _exp_cdf(pulls / 50)
+        + 1 * _exp_cdf(issues / 25)
+        + 1 * _exp_cdf(reviews / 2)
+        + 4 * _log_cdf(stars / 50)
+        + 1 * _log_cdf(followers / 10)
+    )
+    percent = (1 - score / 12) * 100
+    steps = (1, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100)
+    names = ("S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C")
+    for limit, name in zip(steps, names):
+        if percent <= limit:
+            return name
+    return "C"
+
+
 def activity(login):
     data = contributions(login)
     counts = Counter()
@@ -221,4 +248,42 @@ def activity(login):
     years = []
     for year in range(info["created"].year, datetime.now(timezone.utc).year + 1):
         years.append([str(year), counts.get(str(year), 0)])
-    return {"login": data["login"], "years": years[-8:]}
+    query = """
+    query($login: String!) {
+      user(login: $login) {
+        followers { totalCount }
+        issues { totalCount }
+        pullRequests { totalCount }
+        repositoriesContributedTo(
+          first: 1
+          contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]
+        ) { totalCount }
+        contributionsCollection {
+          totalCommitContributions
+          restrictedContributionsCount
+          totalPullRequestReviewContributions
+        }
+      }
+    }
+    """
+    user = _graphql(query, {"login": login}).get("user")
+    if not user:
+        raise SystemExit(f"no github user named {login}")
+    year = user["contributionsCollection"]
+    commits = year["totalCommitContributions"] + year.get("restrictedContributionsCount", 0)
+    pulls = user["pullRequests"]["totalCount"]
+    issues = user["issues"]["totalCount"]
+    reviews = year["totalPullRequestReviewContributions"]
+    followers = user["followers"]["totalCount"]
+    return {
+        "login": data["login"],
+        "years": years[-8:],
+        "rank": _level(commits, pulls, issues, reviews, data["stars"], followers),
+        "stars": data["stars"],
+        "commits": commits,
+        "pulls": pulls,
+        "issues": issues,
+        "reviews": reviews,
+        "followers": followers,
+        "contributed": user["repositoriesContributedTo"]["totalCount"],
+    }
