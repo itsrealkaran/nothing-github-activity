@@ -1,6 +1,6 @@
 # itsrealkaran
 
-Compact is this year. Regular and wide are bar widgets at GitHub widths.
+Mini is the rank. Compact and regular are the stat sheet. Wide adds the year bars.
 
 ## classic
 
