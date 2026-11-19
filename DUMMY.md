@@ -1,6 +1,6 @@
 # itsrealkaran
 
-Mini is the rank. Compact and regular are the stat sheet. Wide adds the year bars.
+The rank sits on the left with a glyph of nine equal squares. The stat rows sit on the right.
 
 ## classic
 
