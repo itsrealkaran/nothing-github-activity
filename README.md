@@ -55,7 +55,7 @@ The title is a dot grid. Labels are monospace.
 | --- | --- | --- |
 | `mini` | 220×168 | The rank, nine squares, and stars. |
 | `compact` | 495×212 | The ring and one column of five counts. |
-| `regular` | 440×212 | The ring and those five counts in two columns. Default. |
+| `regular` | 408×212 | The ring and those five counts in two columns. Default. |
 | `wide` | 896×220 | A larger ring, two columns, and the login. |
 
 The files in `dist/` use the theme name, then the size: `classic-regular.svg`.

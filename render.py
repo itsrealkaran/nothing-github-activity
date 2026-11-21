@@ -146,7 +146,7 @@ def _compact(mode, colors, data, border):
 
 def _regular(mode, colors, data, border):
     """Same five counts as compact, split into two columns."""
-    width = 440
+    width = 408
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     cy = 118
     parts = [
@@ -155,7 +155,7 @@ def _regular(mode, colors, data, border):
         _ring(86, cy, 36, data["rank"], colors, _dot_fill(mode, colors)),
         label(86, cy + 8, data["rank"], colors["figure"], 26, -0.8, anchor="middle"),
     ]
-    left, right, gap = 156, width - 20, 16
+    left, right, gap = 136, width - 20, 10
     span = (right - left - gap) / 2
     columns = (ROWS[:3], ROWS[3:])
     xs = (left, left + span + gap)
