@@ -20,15 +20,15 @@ ROWS = (
 RANKS = ("S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C")
 
 
-def render(mode, size, data):
+def render(mode, size, data, border=True):
     colors = theme(mode)
     if size == "mini":
-        return _mini(mode, colors, data)
+        return _mini(mode, colors, data, border)
     if size == "wide":
-        return _wide(mode, colors, data)
+        return _wide(mode, colors, data, border)
     if size == "regular":
-        return _regular(mode, colors, data)
-    return _compact(mode, colors, data)
+        return _regular(mode, colors, data, border)
+    return _compact(mode, colors, data, border)
 
 
 def _mark(x, y, colors, size=6):
@@ -63,10 +63,10 @@ def _stat(x, y, title, value, colors, number_x):
     ])
 
 
-def _mini(mode, colors, data):
+def _mini(mode, colors, data, border):
     name, _ = dots("ACTIVITY", 28, 12, colors["fg"], scale=1.15)
     return "\n".join([
-        open_svg(mode, 220, 168, f"{data['login']} activity", mark=6, margin=14),
+        open_svg(mode, 220, 168, f"{data['login']} activity", mark=6, margin=14, border=border),
         name,
         label(16, 88, data["rank"], colors["figure"], 32, -1),
         label(16, 108, "Rank", colors["muted"], 11, 0.3),
@@ -129,12 +129,12 @@ def _ring(cx, cy, radius, rank, colors, dot, stroke=3):
     return "".join(parts)
 
 
-def _compact(mode, colors, data):
+def _compact(mode, colors, data, border):
     width, height = 495, 212
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     cy = 118
     parts = [
-        open_svg(mode, width, height, f"{data['login']} activity"),
+        open_svg(mode, width, height, f"{data['login']} activity", border=border),
         name,
         _ring(86, cy, 36, data["rank"], colors, _dot_fill(mode, colors)),
         label(86, cy + 8, data["rank"], colors["figure"], 26, -0.8, anchor="middle"),
@@ -144,19 +144,22 @@ def _compact(mode, colors, data):
     return "\n".join(parts + ["</svg>"])
 
 
-def _regular(mode, colors, data):
+def _regular(mode, colors, data, border):
     """Same five counts as compact, split into two columns."""
+    width = 440
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     cy = 118
     parts = [
-        open_svg(mode, 495, 212, f"{data['login']} activity"),
+        open_svg(mode, width, 212, f"{data['login']} activity", border=border),
         name,
         _ring(86, cy, 36, data["rank"], colors, _dot_fill(mode, colors)),
         label(86, cy + 8, data["rank"], colors["figure"], 26, -0.8, anchor="middle"),
     ]
+    left, right, gap = 156, width - 20, 16
+    span = (right - left - gap) / 2
     columns = (ROWS[:3], ROWS[3:])
-    xs = (168, 340)
-    numbers = (322, 475)
+    xs = (left, left + span + gap)
+    numbers = (left + span, right)
     ys = (86, 118, 150)
     for column, rows in enumerate(columns):
         for row, (key, title) in enumerate(rows):
@@ -164,10 +167,10 @@ def _regular(mode, colors, data):
     return "\n".join(parts + ["</svg>"])
 
 
-def _wide(mode, colors, data):
+def _wide(mode, colors, data, border):
     name, _ = dots("ACTIVITY", 40, 16, colors["fg"], scale=1.8)
     parts = [
-        open_svg(mode, 896, 220, f"{data['login']} activity"),
+        open_svg(mode, 896, 220, f"{data['login']} activity", border=border),
         name,
         label(876, 36, f"@{data['login']}", colors["muted"], 12, 0.2, anchor="end"),
         _ring(100, 124, 46, data["rank"], colors, _dot_fill(mode, colors), stroke=4),

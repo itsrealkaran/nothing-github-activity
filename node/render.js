@@ -13,12 +13,12 @@ const ROWS = [
 ];
 const RANKS = ["S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C"];
 
-function render(mode, size, data) {
+function render(mode, size, data, border = true) {
   const colors = theme(mode);
-  if (size === "mini") return mini(mode, colors, data);
-  if (size === "wide") return wide(mode, colors, data);
-  if (size === "regular") return regular(mode, colors, data);
-  return compact(mode, colors, data);
+  if (size === "mini") return mini(mode, colors, data, border);
+  if (size === "wide") return wide(mode, colors, data, border);
+  if (size === "regular") return regular(mode, colors, data, border);
+  return compact(mode, colors, data, border);
 }
 
 function mark(x, y, colors, size = 6) {
@@ -49,10 +49,10 @@ function stat(x, y, title, value, colors, numberX) {
   ].join("\n");
 }
 
-function mini(mode, colors, data) {
+function mini(mode, colors, data, border) {
   const [name] = dots("ACTIVITY", 28, 12, colors.fg, 1.15);
   return [
-    openSvg(mode, 220, 168, data.login + " activity", 6, 14),
+    openSvg(mode, 220, 168, data.login + " activity", 6, 14, border),
     name,
     label(16, 88, data.rank, colors.figure, 32, -1),
     label(16, 108, "Rank", colors.muted, 11, 0.3),
@@ -107,13 +107,13 @@ function ring(cx, cy, radius, rank, colors, dot, stroke = 3) {
   return parts.join("");
 }
 
-function compact(mode, colors, data) {
+function compact(mode, colors, data, border) {
   const width = 495;
   const height = 212;
   const [name] = dots("ACTIVITY", 40, 16, colors.fg, 1.8);
   const cy = 118;
   const parts = [
-    openSvg(mode, width, height, data.login + " activity"),
+    openSvg(mode, width, height, data.login + " activity", 8, 20, border),
     name,
     ring(86, cy, 36, data.rank, colors, dotFill(mode, colors)),
     label(86, cy + 8, data.rank, colors.figure, 26, -0.8, "middle"),
@@ -125,18 +125,23 @@ function compact(mode, colors, data) {
   return parts.join("\n");
 }
 
-function regular(mode, colors, data) {
+function regular(mode, colors, data, border) {
+  const width = 440;
   const [name] = dots("ACTIVITY", 40, 16, colors.fg, 1.8);
   const cy = 118;
   const parts = [
-    openSvg(mode, 495, 212, data.login + " activity"),
+    openSvg(mode, width, 212, data.login + " activity", 8, 20, border),
     name,
     ring(86, cy, 36, data.rank, colors, dotFill(mode, colors)),
     label(86, cy + 8, data.rank, colors.figure, 26, -0.8, "middle"),
   ];
   const columns = [ROWS.slice(0, 3), ROWS.slice(3)];
-  const xs = [168, 340];
-  const numbers = [322, 475];
+  const left = 156;
+  const right = width - 20;
+  const gap = 16;
+  const span = (right - left - gap) / 2;
+  const xs = [left, left + span + gap];
+  const numbers = [left + span, right];
   const ys = [86, 118, 150];
   columns.forEach((rows, column) => {
     rows.forEach(([key, title], row) => {
@@ -147,10 +152,10 @@ function regular(mode, colors, data) {
   return parts.join("\n");
 }
 
-function wide(mode, colors, data) {
+function wide(mode, colors, data, border) {
   const [name] = dots("ACTIVITY", 40, 16, colors.fg, 1.8);
   const parts = [
-    openSvg(mode, 896, 220, data.login + " activity"),
+    openSvg(mode, 896, 220, data.login + " activity", 8, 20, border),
     name,
     label(876, 36, "@" + data.login, colors.muted, 12, 0.2, "end"),
     ring(100, 124, 46, data.rank, colors, dotFill(mode, colors), 4),
