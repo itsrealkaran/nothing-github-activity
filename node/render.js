@@ -126,7 +126,7 @@ function compact(mode, colors, data, border) {
 }
 
 function regular(mode, colors, data, border) {
-  const width = 440;
+  const width = 408;
   const [name] = dots("ACTIVITY", 40, 16, colors.fg, 1.8);
   const cy = 118;
   const parts = [
@@ -136,9 +136,9 @@ function regular(mode, colors, data, border) {
     label(86, cy + 8, data.rank, colors.figure, 26, -0.8, "middle"),
   ];
   const columns = [ROWS.slice(0, 3), ROWS.slice(3)];
-  const left = 156;
+  const left = 136;
   const right = width - 20;
-  const gap = 16;
+  const gap = 10;
   const span = (right - left - gap) / 2;
   const xs = [left, left + span + gap];
   const numbers = [left + span, right];
